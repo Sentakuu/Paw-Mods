@@ -257,6 +257,10 @@
             color: var(--accent);
             margin-bottom: 10px;
         }
+
+        .btn i {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -390,13 +394,22 @@
             }, 300);
         }
 
+        // Update updateNavbar function
         function updateNavbar() {
             const navLinks = document.querySelector('.nav-links');
             if (currentUser) {
                 navLinks.innerHTML = `
-                    <span>Welcome, ${currentUser.username}</span>
-                    ${currentUser.isAdmin ? '<button class="btn" onclick="showAdminDashboard()">Admin Dashboard</button>' : ''}
-                    <button class="btn" onclick="logout()">Logout</button>
+                    <span style="color: var(--accent)">Welcome, ${currentUser.username}</span>
+                    ${currentUser.isAdmin ? 
+                        '<button class="btn" onclick="toggleAdminDashboard()"><i class="fas fa-shield-alt"></i> Admin Dashboard</button>' 
+                        : ''
+                    }
+                    <button class="btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                `;
+            } else {
+                navLinks.innerHTML = `
+                    <button class="btn" onclick="showAuth('login')">Login</button>
+                    <button class="btn" onclick="showAuth('register')">Register</button>
                 `;
             }
         }
@@ -484,6 +497,18 @@
                 updateStats();
             }
         });
+
+        // Add new toggle function
+        function toggleAdminDashboard() {
+            const dashboard = document.getElementById('adminDashboard');
+            if (currentUser?.isAdmin) {
+                dashboard.style.display = dashboard.style.display === 'none' ? 'block' : 'none';
+                if (dashboard.style.display === 'block') {
+                    updateStats();
+                    dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
 
         function showAdminDashboard() {
             const dashboard = document.getElementById('adminDashboard');
