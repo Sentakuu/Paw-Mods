@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🐺 Wolf's Mod Den</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
         
@@ -30,53 +31,78 @@
             color: var(--text);
             min-height: 100vh;
             background: linear-gradient(45deg, #1a1a2e, #30305a);
-            font-family: 'Quicksand', sans-serif;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
         }
 
         .hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 6rem 2rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, rgba(106, 76, 147, 0.8), rgba(134, 117, 169, 0.8));
+            padding: 0 20px;
         }
 
-        .hero::before {
-            content: '🐾';
-            position: absolute;
-            font-size: 200px;
-            opacity: 0.1;
-            right: -50px;
-            top: -50px;
-            transform: rotate(45deg);
-            animation: float 6s ease-in-out infinite;
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: slideDown 1s ease;
         }
 
-        @keyframes float {
-            0%, 100% { transform: rotate(45deg) translate(0, 0); }
-            50% { transform: rotate(45deg) translate(0, -20px); }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            animation: slideUp 1s ease 0.3s backwards;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .mod-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .auth-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
             border-radius: 20px;
-            padding: 25px;
-            margin: 20px 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+            width: 90%;
+            max-width: 400px;
         }
 
-        .mod-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 45px rgba(106, 76, 147, 0.2);
-            border-color: var(--accent);
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
         }
 
         .btn {
@@ -90,9 +116,8 @@
             position: relative;
             overflow: hidden;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn:hover {
@@ -116,222 +141,120 @@
             transform: translateX(100%);
         }
 
-        .mod-item {
+        .content {
+            margin-top: 80px;
             padding: 20px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            margin: 10px 0;
-            transition: all 0.3s ease;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .mod-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(10px);
-        }
-
-        .mod-item:last-child {
-            border-bottom: none;
-        }
-
-        .admin-panel {
-            background: var(--wolf-gray);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
+        #adminDashboard {
             display: none;
-            animation: slideDown 0.3s ease;
         }
 
         @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
+            from { transform: translateY(-30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .mod-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            color: var(--text);
-            padding: 15px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .mod-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(195, 177, 225, 0.2);
-        }
-
-        .success-message {
-            background: linear-gradient(45deg, var(--success), #45a049);
-            border-radius: 12px;
-            padding: 15px;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .category-title {
-            font-size: 1.8rem;
-            color: var(--accent);
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .category-title::before {
-            content: '🐾';
-            font-size: 2rem;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .paw-print {
-            position: fixed;
-            font-size: 20px;
-            pointer-events: none;
-            animation: pawFade 2s forwards;
-            z-index: 1000;
-        }
-
-        @keyframes pawFade {
-            0% { opacity: 0.8; transform: scale(0.8) rotate(random(360)deg); }
-            100% { opacity: 0; transform: scale(1.2) rotate(random(360)deg); }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="logo">🐺 Wolf's Mod Den</div>
+        <div class="nav-links">
+            <button class="btn" onclick="showAuth('login')">Login</button>
+            <button class="btn" onclick="showAuth('register')">Register</button>
+        </div>
+    </nav>
+
     <div class="hero">
         <h1>🐺 Wolf's Mod Den</h1>
-        <p>Curated Collection of Furry Gaming Mods</p>
-        <button class="btn" onclick="toggleAdmin()">Admin Access</button>
+        <p>Discover and download the best furry mods for your favorite games</p>
+        <button class="btn" onclick="scrollToMods()">Explore Mods</button>
     </div>
 
-    <div class="container">
-        <div id="adminPanel" class="admin-panel">
-            <h2>Admin Control</h2>
-            <input type="password" id="adminPass" class="mod-input" placeholder="Admin Password">
-            <button class="btn" onclick="login()">Login</button>
-            
-            <div id="modForm" style="display: none;">
-                <input type="text" id="modName" class="mod-input" placeholder="Mod Name">
-                <input type="text" id="modLink" class="mod-input" placeholder="Mod Link">
-                <select id="modCategory" class="mod-input">
-                    <option value="gmod">Garry's Mod</option>
-                    <option value="other">Other Games</option>
-                </select>
-                <button class="btn" onclick="addMod()">Add Mod</button>
-                <div id="successMessage" class="success-message">Mod added successfully!</div>
-            </div>
-        </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="auth-container" id="authForm">
+        <h2 id="authTitle">Login</h2>
+        <form id="authFormContent" onsubmit="handleAuth(event)">
+            <input type="text" class="mod-input" placeholder="Username" required>
+            <input type="password" class="mod-input" placeholder="Password" required>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
 
+    <div class="content">
         <div id="modContainer"></div>
+        <div id="adminDashboard">
+            <h2>Admin Dashboard</h2>
+            <!-- Admin controls here -->
+        </div>
     </div>
 
     <script>
-        const ADMIN_PASSWORD = 'wolfden2024';
-        let mods = JSON.parse(localStorage.getItem('mods')) || {
-            'gmod': [],
-            'other': []
-        };
+        // Simulated user data (replace with proper backend)
+        const users = [
+            { username: 'admin', password: 'admin123', isAdmin: true }
+        ];
 
-        function toggleAdmin() {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        let currentUser = null;
+
+        function showAuth(type) {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('authTitle').textContent = type === 'login' ? 'Login' : 'Register';
         }
 
-        function login() {
-            const pass = document.getElementById('adminPass').value;
-            if (pass === ADMIN_PASSWORD) {
-                document.getElementById('modForm').style.display = 'block';
-            } else {
-                alert('Invalid password!');
+        function handleAuth(event) {
+            event.preventDefault();
+            const form = event.target;
+            const username = form.elements[0].value;
+            const password = form.elements[1].value;
+
+            if (username === 'admin' && password === 'admin123') {
+                currentUser = { username, isAdmin: true };
+                document.getElementById('adminDashboard').style.display = 'block';
+            }
+
+            hideAuth();
+            updateNavbar();
+        }
+
+        function hideAuth() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('authForm').style.display = 'none';
+        }
+
+        function updateNavbar() {
+            const navLinks = document.querySelector('.nav-links');
+            if (currentUser) {
+                navLinks.innerHTML = `
+                    <span>Welcome, ${currentUser.username}</span>
+                    ${currentUser.isAdmin ? '<a href="#admin" class="btn">Admin Dashboard</a>' : ''}
+                    <button class="btn" onclick="logout()">Logout</button>
+                `;
             }
         }
 
-        function addMod() {
-            const name = document.getElementById('modName').value;
-            const link = document.getElementById('modLink').value;
-            const category = document.getElementById('modCategory').value;
-
-            if (!name || !link) return;
-
-            mods[category].push({ name, link });
-            localStorage.setItem('mods', JSON.stringify(mods));
-            
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            setTimeout(() => successMessage.style.display = 'none', 3000);
-            
-            renderMods();
-            clearForm();
+        function logout() {
+            currentUser = null;
+            document.getElementById('adminDashboard').style.display = 'none';
+            location.reload();
         }
 
-        function clearForm() {
-            document.getElementById('modName').value = '';
-            document.getElementById('modLink').value = '';
+        function scrollToMods() {
+            document.querySelector('.content').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function renderMods() {
-            const container = document.getElementById('modContainer');
-            container.innerHTML = '';
-
-            Object.entries(mods).forEach(([category, modList]) => {
-                if (modList.length === 0) return;
-
-                const section = document.createElement('div');
-                section.className = 'mod-card';
-                section.innerHTML = `
-                    <div class="category-title">
-                        <h2>${category === 'gmod' ? "Garry's Mod" : 'Other Games'}</h2>
-                    </div>
-                    <div class="mod-list">
-                        ${modList.map(mod => `
-                            <div class="mod-item">
-                                <span>${mod.name}</span>
-                                <a href="${mod.link}" class="btn" target="_blank">Download</a>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                container.appendChild(section);
-            });
-        }
-
-        renderMods();
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Create paw prints on mouse move
-            document.addEventListener('mousemove', (e) => {
-                if (Math.random() > 0.92) {
-                    const paw = document.createElement('div');
-                    paw.className = 'paw-print';
-                    paw.innerHTML = '🐾';
-                    paw.style.left = e.pageX + 'px';
-                    paw.style.top = e.pageY + 'px';
-                    document.body.appendChild(paw);
-                    
-                    setTimeout(() => paw.remove(), 2000);
-                }
-            });
-        });
+        // Close auth form when clicking overlay
+        document.getElementById('overlay').addEventListener('click', hideAuth);
     </script>
 </body>
 </html>
