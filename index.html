@@ -332,6 +332,20 @@
             font-size: 24px;
             cursor: pointer;
         }
+
+        .mod-link {
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .mod-link:hover {
+            color: var(--text);
+            transform: translateX(5px);
+        }
     </style>
 </head>
 <body>
@@ -623,11 +637,32 @@
         }
 
         function getModEmbed(link) {
-            if (link.includes('steamcommunity.com')) {
-                const modId = link.split('/').pop();
-                return `<iframe class="mod-embed" src="https://store.steampowered.com/widget/${modId}"></iframe>`;
+            if (link.includes('steamcommunity.com/sharedfiles')) {
+                const workshopId = link.split('?id=')[1];
+                return `
+                    <div class="mod-preview">
+                        <iframe 
+                            src="https://steamcommunity.com/sharedfiles/widget/${workshopId}" 
+                            width="100%" 
+                            height="190" 
+                            frameborder="0" 
+                            scrolling="no">
+                        </iframe>
+                    </div>`;
+            } else if (link.includes('modworkshop.net')) {
+                return `
+                    <div class="mod-preview">
+                        <a href="${link}" target="_blank" class="mod-link">
+                            <i class="fas fa-external-link-alt"></i> View on ModWorkshop
+                        </a>
+                    </div>`;
             }
-            return ''; // Return empty string for non-Steam links
+            return `
+                <div class="mod-preview">
+                    <a href="${link}" target="_blank" class="mod-link">
+                        <i class="fas fa-external-link-alt"></i> View Mod
+                    </a>
+                </div>`;
         }
 
         // Initial load
