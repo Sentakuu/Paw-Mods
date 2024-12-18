@@ -205,6 +205,24 @@
             flex-direction: column;
             gap: 15px;
         }
+
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+
+        .message.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .message.error {
+            background: var(--error);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -246,11 +264,10 @@
 
     <script>
         // Simulated user data (replace with proper backend)
-        const users = [
+        let users = JSON.parse(localStorage.getItem('users')) || [
             { username: 'Arionyx', password: 'WolfsDenNoHaters', isAdmin: true }
         ];
-
-        let currentUser = null;
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
         function showAuth(type) {
             const authForm = document.getElementById('authForm');
@@ -266,14 +283,41 @@
             const form = event.target;
             const username = form.elements[0].value;
             const password = form.elements[1].value;
+            const isLogin = document.getElementById('authTitle').textContent === 'Login';
 
-            if (username === 'admin' && password === 'admin123') {
-                currentUser = { username, isAdmin: true };
-                document.getElementById('adminDashboard').style.display = 'block';
+            if (isLogin) {
+                const user = users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    showMessage('Successfully logged in!', 'success');
+                    updateNavbar();
+                    hideAuth();
+                } else {
+                    showMessage('Invalid credentials!', 'error');
+                }
+            } else {
+                if (users.some(u => u.username === username)) {
+                    showMessage('Username already exists!', 'error');
+                    return;
+                }
+                const newUser = { username, password, isAdmin: false };
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                currentUser = newUser;
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                showMessage('Account created successfully!', 'success');
+                updateNavbar();
+                hideAuth();
             }
+        }
 
-            hideAuth();
-            updateNavbar();
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            document.getElementById('authForm').prepend(messageDiv);
+            setTimeout(() => messageDiv.remove(), 3000);
         }
 
         function hideAuth() {
@@ -298,8 +342,9 @@
 
         function logout() {
             currentUser = null;
+            localStorage.removeItem('currentUser');
             document.getElementById('adminDashboard').style.display = 'none';
-            location.reload();
+            updateNavbar();
         }
 
         function scrollToMods() {
