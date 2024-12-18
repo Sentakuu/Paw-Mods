@@ -9,9 +9,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --primary: #6A4C93;
-            --secondary: #8675A9;
-            --accent: #C3B1E1;
+            --primary: #41e9ff;
+            --secondary: #3d8eeb;
+            --accent: #3eafe4;
             --background: #1a1a2e;
             --card-bg: rgba(255, 255, 255, 0.1);
             --text: #fff;
@@ -561,7 +561,9 @@
                                 <h3>${mod.name}</h3>
                                 <small>Added by ${mod.addedBy}</small>
                             </div>
-                            ${getModEmbed(mod.link)}
+                            <a href="${mod.link}" class="btn" target="_blank">
+                                <i class="fas fa-download"></i> Download
+                            </a>
                         </div>
                     `).join('')}
                 `;
@@ -648,24 +650,6 @@
                 dashboard.scrollIntoView({ behavior: 'smooth' });
                 updateStats();
             }
-        }
-
-        // Update getModEmbed function to simpler link display
-        function getModEmbed(link) {
-            if (link.includes('steamcommunity.com')) {
-                return `
-                    <div class="mod-preview">
-                        <a href="${link}" target="_blank" class="btn mod-link">
-                            <i class="fab fa-steam"></i> View on Steam Workshop
-                        </a>
-                    </div>`;
-            }
-            return `
-                <div class="mod-preview">
-                    <a href="${link}" target="_blank" class="btn mod-link">
-                        <i class="fas fa-external-link-alt"></i> View Mod
-                    </a>
-                </div>`;
         }
 
         // Initial load
