@@ -395,7 +395,7 @@
             if (currentUser) {
                 navLinks.innerHTML = `
                     <span>Welcome, ${currentUser.username}</span>
-                    ${currentUser.isAdmin ? '<a href="#admin" class="btn">Admin Dashboard</a>' : ''}
+                    ${currentUser.isAdmin ? '<button class="btn" onclick="showAdminDashboard()">Admin Dashboard</button>' : ''}
                     <button class="btn" onclick="logout()">Logout</button>
                 `;
             }
@@ -484,6 +484,15 @@
                 updateStats();
             }
         });
+
+        function showAdminDashboard() {
+            const dashboard = document.getElementById('adminDashboard');
+            if (currentUser?.isAdmin) {
+                dashboard.style.display = 'block';
+                dashboard.scrollIntoView({ behavior: 'smooth' });
+                updateStats();
+            }
+        }
     </script>
 </body>
 </html>
