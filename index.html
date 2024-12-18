@@ -82,7 +82,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.9);
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             padding: 2rem;
@@ -92,6 +92,20 @@
             z-index: 1001;
             width: 90%;
             max-width: 400px;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .auth-container.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-size: 24px;
         }
 
         .overlay {
@@ -162,6 +176,35 @@
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        .mod-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(195, 177, 225, 0.3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .mod-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(195, 177, 225, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .mod-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        #authFormContent {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
@@ -186,7 +229,10 @@
         <form id="authFormContent" onsubmit="handleAuth(event)">
             <input type="text" class="mod-input" placeholder="Username" required>
             <input type="password" class="mod-input" placeholder="Password" required>
-            <button type="submit" class="btn">Submit</button>
+            <button type="submit" class="btn">
+                <i class="fas fa-paw"></i>
+                <span id="authButtonText">Login</span>
+            </button>
         </form>
     </div>
 
@@ -207,9 +253,12 @@
         let currentUser = null;
 
         function showAuth(type) {
+            const authForm = document.getElementById('authForm');
             document.getElementById('overlay').style.display = 'block';
-            document.getElementById('authForm').style.display = 'block';
+            authForm.style.display = 'block';
             document.getElementById('authTitle').textContent = type === 'login' ? 'Login' : 'Register';
+            document.getElementById('authButtonText').textContent = type === 'login' ? 'Login' : 'Register';
+            setTimeout(() => authForm.classList.add('active'), 50);
         }
 
         function handleAuth(event) {
@@ -228,8 +277,12 @@
         }
 
         function hideAuth() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('authForm').style.display = 'none';
+            const authForm = document.getElementById('authForm');
+            authForm.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+                authForm.style.display = 'none';
+            }, 300);
         }
 
         function updateNavbar() {
@@ -255,6 +308,45 @@
 
         // Close auth form when clicking overlay
         document.getElementById('overlay').addEventListener('click', hideAuth);
+
+        // Mod storage handling
+        let mods = JSON.parse(localStorage.getItem('mods')) || {
+            'gmod': [],
+            'other': []
+        };
+
+        function addMod(name, link, category) {
+            mods[category].push({ name, link, addedBy: currentUser?.username });
+            localStorage.setItem('mods', JSON.stringify(mods));
+            renderMods();
+        }
+
+        function renderMods() {
+            const container = document.getElementById('modContainer');
+            container.innerHTML = '';
+            
+            Object.entries(mods).forEach(([category, modList]) => {
+                if (modList.length === 0) return;
+                
+                const section = document.createElement('div');
+                section.className = 'mod-card';
+                section.innerHTML = `
+                    <h2>${category === 'gmod' ? "Garry's Mod" : 'Other Games'}</h2>
+                    ${modList.map(mod => `
+                        <div class="mod-item">
+                            <div>
+                                <span>${mod.name}</span>
+                                <small>Added by ${mod.addedBy || 'Anonymous'}</small>
+                            </div>
+                            <a href="${mod.link}" class="btn" target="_blank">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </div>
+                    `).join('')}
+                `;
+                container.appendChild(section);
+            });
+        }
     </script>
 </body>
 </html>
