@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐺 Wolf's Mod Den</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #2B3467;
+            --secondary: #4B5D8C;
+            --accent: #BAD7E9;
+            --wolf-gray: #526D82;
+            --background: #FCFFE7;
+            --success: #4CAF50;
+            --error: #F44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--primary);
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(45deg, rgba(43, 52, 103, 0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(43, 52, 103, 0.05) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(43, 52, 103, 0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(43, 52, 103, 0.05) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .hero {
+            background: var(--primary);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .hero::before, .hero::after {
+            content: '🐾';
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.2;
+            animation: pawWalk 15s linear infinite;
+        }
+
+        .hero::before {
+            top: 20px;
+            animation-delay: -7.5s;
+        }
+
+        @keyframes pawWalk {
+            from { left: -50px; }
+            to { left: calc(100% + 50px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .mod-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(0);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .mod-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .mod-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--accent);
+            transition: background-color 0.3s ease;
+        }
+
+        .mod-item:hover {
+            background-color: rgba(186, 215, 233, 0.1);
+        }
+
+        .mod-item:last-child {
+            border-bottom: none;
+        }
+
+        .admin-panel {
+            background: var(--wolf-gray);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .mod-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .mod-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .category-title::before {
+            content: '🐾';
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🐺 Wolf's Mod Den</h1>
+        <p>Curated Collection of Furry Gaming Mods</p>
+        <button class="btn" onclick="toggleAdmin()">Admin Access</button>
+    </div>
+
+    <div class="container">
+        <div id="adminPanel" class="admin-panel">
+            <h2>Admin Control</h2>
+            <input type="password" id="adminPass" class="mod-input" placeholder="Admin Password">
+            <button class="btn" onclick="login()">Login</button>
+            
+            <div id="modForm" style="display: none;">
+                <input type="text" id="modName" class="mod-input" placeholder="Mod Name">
+                <input type="text" id="modLink" class="mod-input" placeholder="Mod Link">
+                <select id="modCategory" class="mod-input">
+                    <option value="gmod">Garry's Mod</option>
+                    <option value="other">Other Games</option>
+                </select>
+                <button class="btn" onclick="addMod()">Add Mod</button>
+                <div id="successMessage" class="success-message">Mod added successfully!</div>
+            </div>
+        </div>
+
+        <div id="modContainer"></div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'wolfden2024';
+        let mods = JSON.parse(localStorage.getItem('mods')) || {
+            'gmod': [],
+            'other': []
+        };
+
+        function toggleAdmin() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function login() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('modForm').style.display = 'block';
+            } else {
+                alert('Invalid password!');
+            }
+        }
+
+        function addMod() {
+            const name = document.getElementById('modName').value;
+            const link = document.getElementById('modLink').value;
+            const category = document.getElementById('modCategory').value;
+
+            if (!name || !link) return;
+
+            mods[category].push({ name, link });
+            localStorage.setItem('mods', JSON.stringify(mods));
+            
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            setTimeout(() => successMessage.style.display = 'none', 3000);
+            
+            renderMods();
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('modName').value = '';
+            document.getElementById('modLink').value = '';
+        }
+
+        function renderMods() {
+            const container = document.getElementById('modContainer');
+            container.innerHTML = '';
+
+            Object.entries(mods).forEach(([category, modList]) => {
+                if (modList.length === 0) return;
+
+                const section = document.createElement('div');
+                section.className = 'mod-card';
+                section.innerHTML = `
+                    <div class="category-title">
+                        <h2>${category === 'gmod' ? "Garry's Mod" : 'Other Games'}</h2>
+                    </div>
+                    <div class="mod-list">
+                        ${modList.map(mod => `
+                            <div class="mod-item">
+                                <span>${mod.name}</span>
+                                <a href="${mod.link}" class="btn" target="_blank">Download</a>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        renderMods();
+    </script>
+</body>
+</html>
